@@ -3,32 +3,25 @@
 ---
 # For help on this file's format, see https://kitchen.ci/
 driver:
-  name: docker
-  use_sudo: false
-  privileged: true
-  run_command: /usr/lib/systemd/systemd
+  name: vagrant
+  cachier: true
+  box_check_update: false
 
-transport:
-  name: docker
+platforms:
+  - name: centos-7
 
 provisioner:
-  # provision_command: mkdir -p /run/sshd
   name: salt_solo
   log_level: debug
-  salt_install: none
+  salt_install: bootstrap
+  salt_version: latest
   require_chef: false
   formula: freeradius
   salt_copy_filter:
     - .kitchen
     - .git
-  pillars_from_directories:
-    - test/salt/pillar
-
-platforms:
-  ## SALT `3004.1`
-  - name: centos-7-3004-1-py3
-    driver:
-      image: saltimages/salt-3004.1-py3:centos-7
+  pillars_from_files:
+    freeradius.sls: pillar.example
 
 verifier:
   # https://www.inspec.io/
@@ -44,8 +37,13 @@ suites:
       state_top:
         base:
           '*':
-            - freeradius._mapdata
+            # - freeradius._mapdata
             - freeradius
+      pillars:
+        top.sls:
+          base:
+            '*':
+              - freeradius
     verifier:
       inspec_tests:
         - path: test/integration/default

@@ -17,3 +17,4 @@ gem 'kitchen-docker', git: 'https://gitlab.com/saltstack-formulas/infrastructure
 
 gem 'kitchen-inspec', '>= 2.5.0'
 gem 'kitchen-salt', '>= 0.7.2'
+gem 'kitchen-vagrant'
