@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+#
+# Set default values.
+---
+values:
+  pkg:
+    name: freeradius
+  rootgroup: root
+  config: '/etc/freeradius'
+  service:
+    name: freeradius
+  subcomponent:
+    config: '/etc/freeradius-subcomponent-formula.conf'
+  # Just here for testing
+  added_in_defaults: defaults_value
+  winner: defaults
+...
