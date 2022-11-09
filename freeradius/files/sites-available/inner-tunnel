@@ -1,0 +1,95 @@
+# -*- text -*-
+######################################################################
+#
+#	This is a virtual server that handles *only* inner tunnel
+#	requests for EAP-TTLS and PEAP types.
+#
+#	$Id: 10eeb55db7a1129ea62f2195c17b286eb4acd1d2 $
+#
+######################################################################
+
+server inner-tunnel {
+
+listen {
+       ipaddr = 127.0.0.1
+       port = 18120
+       type = auth
+}
+
+authorize {
+	eap {
+		ok = return
+	}
+	files
+	expiration
+	logintime
+}
+
+
+authenticate {
+     	Auth-Type rest {
+		update control {
+		     &REST-HTTP-Header := "API-Version: 150"
+		}
+        	rest
+     	}
+	#
+	#  PAP authentication, when a back-end database listed
+	#  in the 'authorize' section supplies a password.  The
+	#  password can be clear-text, or encrypted.
+	Auth-Type PAP {
+		pap
+	}
+
+	#
+	#  Most people want CHAP authentication
+	#  A back-end database listed in the 'authorize' section
+	#  MUST supply a CLEAR TEXT password.  Encrypted passwords
+	#  won't work.
+	Auth-Type CHAP {
+		chap
+	}
+
+	#
+	#  MSCHAP authentication.
+	Auth-Type MS-CHAP {
+		mschap
+	}
+
+	#
+	#  For old names, too.
+	#
+	mschap
+	eap
+}
+
+post-auth {
+	if (0) {
+		update reply {
+			User-Name !* ANY
+			Message-Authenticator !* ANY
+			EAP-Message !* ANY
+			Proxy-State !* ANY
+			MS-MPPE-Encryption-Types !* ANY
+			MS-MPPE-Encryption-Policy !* ANY
+			MS-MPPE-Send-Key !* ANY
+			MS-MPPE-Recv-Key !* ANY
+		}
+		update {
+			&outer.session-state: += &reply:
+		}
+	}
+	Post-Auth-Type REJECT {
+		attr_filter.access_reject
+		update outer.session-state {
+			&Module-Failure-Message := &request:Module-Failure-Message
+		}
+	}
+}
+
+pre-proxy {}
+post-proxy {
+	eap
+}
+
+} 
