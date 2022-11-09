@@ -5,6 +5,6 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as freeradius with context %}
 
-freeradius-package-install-pkg-installed:
+freeradius_install:
   pkg.installed:
-    - name: {{ freeradius.pkg.name }}
+    - name: freeradius

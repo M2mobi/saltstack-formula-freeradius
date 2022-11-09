@@ -11,6 +11,6 @@ include:
 
 freeradius-package-clean-pkg-removed:
   pkg.removed:
-    - name: {{ freeradius.pkg.name }}
+    - name: freeradius
     - require:
       - sls: {{ sls_config_clean }}
