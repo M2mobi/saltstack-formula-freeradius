@@ -7,5 +7,5 @@
 
 freeradius-service-clean-service-dead:
   service.dead:
-    - name: {{ freeradius.service.name }}
+    - name: radiusd.service
     - enable: False

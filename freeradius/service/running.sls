@@ -3,15 +3,17 @@
 
 {#- Get the `tplroot` from `tpldir` #}
 {%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_config_file = tplroot ~ '.config.file' %}
+{%- set sls_pkg_install = tplroot ~ '.package.install' %}
 {%- from tplroot ~ "/map.jinja" import mapdata as freeradius with context %}
 
 include:
-  - {{ sls_config_file }}
+  - {{ sls_pkg_install }}
 
-freeradius-service-running-service-running:
+freeradius-service:
   service.running:
-    - name: {{ freeradius.service.name }}
+    - name: radiusd
     - enable: True
     - watch:
-      - sls: {{ sls_config_file }}
+      - pkg: freeradius_install
+    - require:
+      - pkg: freeradius_install
