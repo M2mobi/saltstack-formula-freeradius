@@ -22,8 +22,8 @@ rest {
 #		private_key_password    = "supersecret"
 #		random_file             = /dev/urandom
 
-		check_cert = {{ freeradius.tls.check_cert }}
-		check_cert_cn = {{ freeradius.tls.check_cert_cn }}
+		check_cert = {{ freeradius.rest.tls.check_cert }}
+		check_cert_cn = {{ freeradius.rest.tls.check_cert_cn }}
 	}
 
 	connect_uri = "{{ freeradius.rest.api_uri }}"
