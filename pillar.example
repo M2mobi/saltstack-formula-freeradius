@@ -2,13 +2,12 @@
 # vim: ft=yaml
 ---
 freeradius:
-  # lookup:
-    # master: template-master
-  pkg:
-    name: vim-common
-  # service:
-  #   name: systemd-journald
-  # config: /etc/template-formula.conf
+  clients:
+    - name: testing
+      ip: 127.0.0.1
+      secret: testing123
+      # default value
+      nas_type: other
 
   # tofs:
     # The files_switch key serves as a selector for alternative
