@@ -24,3 +24,6 @@ freeradius:
       "called-station-id": "%{Called-Station-Id}",
       "machine-groups": "unimplemented"
     }'
+    headers:
+      - "API-Version: 150"
+      - "Token: aaabbbcccdddeeefff"
