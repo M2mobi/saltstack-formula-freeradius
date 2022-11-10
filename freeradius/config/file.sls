@@ -12,20 +12,6 @@
 include:
   - {{ sls_pkg_install }}
 
-freeradius-config:
-  file.managed:
-    - name: {{ config_dir }}/radiusd.conf
-    - source: salt://freeradius/files/radiusd.conf
-    - mode: 640
-    - user: root
-    - group: radiusd
-    - makedirs: True
-    - template: jinja
-    - require:
-      - pkg: freeradius_install
-    - context:
-        freeradius: {{ freeradius | json }}
-
 freeradius-clients-config:
   file.managed:
     - name: {{ config_dir }}/clients.conf
