@@ -22,7 +22,7 @@ server inner-tunnel {
 	authenticate {
 		Auth-Type rest {
 			update control {
-				{%- for header in freeradius.rest.headers %}
+				{%- for header in freeradius.sites.inner_tunnel.authenticate.rest.headers %}
 					&REST-HTTP-Header += "{{ header }}"
 				{%- endfor %}
 			}

@@ -22,18 +22,18 @@ rest {
 #		private_key_password    = "supersecret"
 #		random_file             = /dev/urandom
 
-		check_cert = {{ freeradius.rest.tls.check_cert }}
-		check_cert_cn = {{ freeradius.rest.tls.check_cert_cn }}
+		check_cert = {{ freeradius.mods.rest.tls.check_cert }}
+		check_cert_cn = {{ freeradius.mods.rest.tls.check_cert_cn }}
 	}
 
-	connect_uri = "{{ freeradius.rest.api_uri }}"
+	connect_uri = "{{ freeradius.mods.rest.api_uri }}"
 
 	authenticate {
 		uri = "${..connect_uri}"
 		tls = ${..tls}
-		method = '{{ freeradius.rest.method }}'
-        body = '{{ freeradius.rest.body }}'
-        data = '{{ freeradius.rest.data }}'
+		method = '{{ freeradius.mods.rest.authenticate.method }}'
+        body = '{{ freeradius.mods.rest.authenticate.body }}'
+        data = '{{ freeradius.mods.rest.authenticate.data }}'
 	}
 
 	pool {

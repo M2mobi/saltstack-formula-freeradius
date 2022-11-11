@@ -8,22 +8,28 @@ freeradius:
       secret: testing123
       # default value
       nas_type: other
-  rest:
-    tls:
-      # Verify the cert was issued by one of the trusted CAs
-      check_cert: 'no'
-      # Verify the CN in the certificate matches the host in the URI
-      check_cert_cn: 'no'
-    api_uri: "https://api.dfwairport.mobi/healthcheck"
-    method: get
-    body: json
-    data: '{
-      "user": "%{User-Name}",
-      "password": "%{User-Password}",
-      "nas-port-type": "%{NAS-Port-Type}",
-      "called-station-id": "%{Called-Station-Id}",
-      "machine-groups": "unimplemented"
-    }'
-    headers:
-      - "API-Version: 150"
-      - "Token: aaabbbcccdddeeefff"
+  sites:
+    inner_tunnel:
+      authenticate:
+        rest:
+          headers:
+            - "API-Version: 150"
+            - "Token: aaabbbcccdddeeefff"
+  mods:
+    rest:
+      tls:
+        # Verify the cert was issued by one of the trusted CAs
+        check_cert: 'no'
+        # Verify the CN in the certificate matches the host in the URI
+        check_cert_cn: 'no'
+      api_uri: "https://api.dfwairport.mobi/healthcheck"
+      authenticate:
+        method: get
+        body: json
+        data: '{
+          "user": "%{User-Name}",
+          "password": "%{User-Password}",
+          "nas-port-type": "%{NAS-Port-Type}",
+          "called-station-id": "%{Called-Station-Id}",
+          "machine-groups": "unimplemented"
+        }'
