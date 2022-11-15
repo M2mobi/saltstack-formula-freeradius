@@ -3,11 +3,7 @@
 ---
 freeradius:
   clients:
-    - name: testing
-      ip: 127.0.0.1
-      secret: testing123
-      # default value
-      nas_type: other
+    - secret: testing123
   sites:
     inner_tunnel:
       authenticate:
