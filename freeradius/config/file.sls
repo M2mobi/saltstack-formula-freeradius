@@ -68,6 +68,20 @@ freeradius-inner-tunnel-config:
     - context:
         freeradius: {{ freeradius | json }}
 
+freeradius-auth-config:
+  file.managed:
+    - name: {{ config_dir }}/mods-config/files/authorize
+    - source: salt://freeradius/files/mods-config/files/authorize
+    - mode: 644
+    - user: root
+    - group: {{ radius_grp }}
+    - makedirs: True
+    - template: jinja
+    - require:
+      - pkg: freeradius_install
+    - context:
+        freeradius: {{ freeradius | json }}
+
 freeradius-enable-default-site:
   file.symlink:
     - name: {{ config_dir }}/sites-enabled/default
