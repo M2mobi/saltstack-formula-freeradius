@@ -7,7 +7,9 @@ values:
   pkg:
     name: freeradius
   rootgroup: root
-  config: '/etc/freeradius'
+  config_dir: /etc/freeradius
+  user: freeradius
+  group: freeradius
   service:
     name: freeradius
   subcomponent:

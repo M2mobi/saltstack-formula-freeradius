@@ -14,5 +14,7 @@
 values:
   pkg:
     name: freeradius-redhat
-  config: /etc/freeradius.conf
+  config_dir: /etc/raddb
+  user: radiusd
+  group: radiusd
 ...

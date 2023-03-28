@@ -6,120 +6,114 @@
 {%- set sls_pkg_install = tplroot ~ '.package.install' %}
 {%- from tplroot ~ "/map.jinja" import mapdata as freeradius with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
-{%- set config_dir = "/etc/raddb" %}
-{%- set radius_grp = "radiusd" %}
 
 include:
   - {{ sls_pkg_install }}
 
 freeradius-clients-config:
   file.managed:
-    - name: {{ config_dir }}/clients.conf
+    - name: {{ freeradius.config_dir }}/clients.conf
     - source: salt://freeradius/files/clients.conf
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
+    - mode: '0644'
+    - user: {{ freeradius.user }}
+    - group: {{ freeradius.group }}
     - makedirs: True
     - template: jinja
     - require:
       - pkg: freeradius_install
     - context:
-        freeradius: {{ freeradius | json }}
-
-freeradius-rlm_rest-config:
-  file.managed:
-    - name: {{ config_dir }}/mods-available/rest
-    - source: salt://freeradius/files/mods-available/rest
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
-    - makedirs: True
-    - template: jinja
-    - require:
-      - pkg: freeradius_install
-    - context:
-        freeradius: {{ freeradius | json }}
-
-freeradius-default-site-config:
-  file.managed:
-    - name: {{ config_dir }}/sites-available/default
-    - source: salt://freeradius/files/sites-available/default
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
-    - makedirs: True
-    - template: jinja
-    - require:
-      - pkg: freeradius_install
-    - context:
-        freeradius: {{ freeradius | json }}
-
-freeradius-inner-tunnel-config:
-  file.managed:
-    - name: {{ config_dir }}/sites-available/inner-tunnel
-    - source: salt://freeradius/files/sites-available/inner-tunnel
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
-    - makedirs: True
-    - template: jinja
-    - require:
-      - pkg: freeradius_install
-    - context:
-        freeradius: {{ freeradius | json }}
+        clients: {{ freeradius.clients | json }}
 
 freeradius-auth-config:
   file.managed:
-    - name: {{ config_dir }}/mods-config/files/authorize
-    - source: salt://freeradius/files/mods-config/files/authorize
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
+    - name: {{ freeradius.config_dir }}/mods-config/files/authorize
+    - mode: '0644'
+    - user: {{ freeradius.user }}
+    - group: {{ freeradius.group }}
+    - makedirs: True
+    - require:
+      - pkg: freeradius_install
+    - contents: |
+        DEFAULT Auth-Type := rest
+
+freeradius-letsencrypt-dir:
+  file.directory:
+    - name: {{ freeradius.config_dir }}/certs/letsencrypt
+    - user: {{ freeradius.user }}
+    - group: {{ freeradius.group }}
+    - makedirs: True
+
+
+{% if 'mods' in freeradius %}
+{% for name,mod in freeradius.mods.items() %}
+freeradius-mod-{{ name }}-config:
+  file.managed:
+    - name: {{ freeradius.config_dir }}/mods-available/{{ name }}
+    - source: salt://freeradius/files/mods-available/{{ name }}
+    - mode: '0644'
+    - user: {{ freeradius.user }}
+    - group: {{ freeradius.group }}
     - makedirs: True
     - template: jinja
     - require:
       - pkg: freeradius_install
     - context:
-        freeradius: {{ freeradius | json }}
+        mod: {{ mod }}
 
-freeradius-enable-default-site:
+{% if mod.get('enabled', False) == True  %}
+freeradius-mod-{{ name }}-config-enable:
   file.symlink:
-    - name: {{ config_dir }}/sites-enabled/default
-    - target: {{ config_dir }}/sites-available/default
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
+    - name: {{ freeradius.config_dir }}/mods-enabled/{{ name }}
+    - target: {{ freeradius.config_dir }}/mods-available/{{ name }}
+    - mode: '0644'
+    - user: {{ freeradius.user }}
+    - group: {{ freeradius.group }}
+    - makedirs: True
+    - require:
+      - freeradius-mod-{{ name }}-config
+{% else %}
+freeradius-mod-{{ name }}-config-disable:
+  file.remove:
+    - name: {{ freeradius.config_dir }}/mods-enabled/{{ name }}
+    - require:
+      - freeradius-mod-{{ name }}-config
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% if 'sites' in freeradius %}
+{% for name,site in freeradius.sites.items() %}
+freeradius-site-{{ name }}-config:
+  file.managed:
+    - name: {{ freeradius.config_dir }}/sites-available/{{ name }}
+    - source: salt://freeradius/files/sites-available/{{ name }}
+    - mode: '0644'
+    - user: {{ freeradius.user }}
+    - group: {{ freeradius.group }}
     - makedirs: True
     - template: jinja
     - require:
-      - freeradius-default-site-config
+      - pkg: freeradius_install
     - context:
-        freeradius: {{ freeradius | json }}
+        site: {{ site }}
 
-freeradius-enable-inner-tunnel-site:
+{% if site.get('enabled', False) == True  %}
+freeradius-site-{{ name }}-config-enable:
   file.symlink:
-    - name: {{ config_dir }}/sites-enabled/inner-tunnel
-    - target: {{ config_dir }}/sites-available/inner-tunnel
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
+    - name: {{ freeradius.config_dir }}/sites-enabled/{{ name }}
+    - target: {{ freeradius.config_dir }}/sites-available/{{ name }}
+    - mode: '0644'
+    - user: {{ freeradius.user }}
+    - group: {{ freeradius.group }}
     - makedirs: True
-    - template: jinja
     - require:
-      - freeradius-inner-tunnel-config
-    - context:
-        freeradius: {{ freeradius | json }}
-
-freeradius-enable-rlm_rest-module:
-  file.symlink:
-    - name: {{ config_dir }}/mods-enabled/rest
-    - target: {{ config_dir }}/mods-available/rest
-    - mode: 644
-    - user: root
-    - group: {{ radius_grp }}
-    - makedirs: True
-    - template: jinja
+      - freeradius-site-{{ name }}-config
+{% else %}
+freeradius-site-{{ name }}-config-disable:
+  file.remove:
+    - name: {{ freeradius.config_dir }}/sites-enabled/{{ name }}
     - require:
-      - freeradius-rlm_rest-config
-    - context:
-        freeradius: {{ freeradius | json }}
+      - freeradius-site-{{ name }}-config
+{% endif %}
+{% endfor %}
+{% endif %}

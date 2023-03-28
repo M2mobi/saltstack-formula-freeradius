@@ -4,36 +4,18 @@
 
 rest {
 	tls {
-		#  Certificate Authorities:
-		#  "ca_file" (libcurl option CURLOPT_ISSUERCERT).
-		#    File containing a single CA, which is the issuer of the server
-		#    certificate.
-		#  "ca_info_file" (libcurl option CURLOPT_CAINFO).
-		#    File containing a bundle of certificates, which allow to handle
-		#    certificate chain validation.
-		#  "ca_path" (libcurl option CURLOPT_CAPATH).
-		#    Directory holding CA certificates to verify the peer with.
-#		ca_file = ${certdir}/cacert.pem
-#		ca_info_file = ${certdir}/cacert_bundle.pem
-#		ca_path = ${certdir}
-
-#		certificate_file        = /path/to/radius.crt
-#		private_key_file        = /path/to/radius.key
-#		private_key_password    = "supersecret"
-#		random_file             = /dev/urandom
-
-		check_cert = {{ freeradius.mods.rest.tls.check_cert }}
-		check_cert_cn = {{ freeradius.mods.rest.tls.check_cert_cn }}
+		check_cert = {{ mod.tls.check_cert }}
+		check_cert_cn = {{ mod.tls.check_cert_cn }}
 	}
 
-	connect_uri = "{{ freeradius.mods.rest.api_uri }}"
+	connect_uri = "{{ mod.api_uri }}"
 
 	authenticate {
 		uri = "${..connect_uri}"
 		tls = ${..tls}
-		method = '{{ freeradius.mods.rest.authenticate.method }}'
-        body = '{{ freeradius.mods.rest.authenticate.body }}'
-        data = '{{ freeradius.mods.rest.authenticate.data }}'
+		method = '{{ mod.authenticate.method }}'
+        body = '{{ mod.authenticate.body }}'
+        data = '{{ mod.authenticate.data | tojson }}'
 	}
 
 	pool {
