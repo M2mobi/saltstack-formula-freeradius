@@ -5,7 +5,3 @@ include:
   - .package
   - .service
   - .config
-
-groups:
-  group.present:
-    - name: radiusd

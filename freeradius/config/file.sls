@@ -10,6 +10,10 @@
 include:
   - {{ sls_pkg_install }}
 
+groups:
+  group.present:
+    - name: {{ freeradius.group }}
+
 freeradius-clients-config:
   file.managed:
     - name: {{ freeradius.config_dir }}/clients.conf
@@ -60,7 +64,7 @@ freeradius-mod-{{ name }}-config:
     - context:
         mod: {{ mod }}
 
-{% if mod.get('enabled', False) == True  %}
+{% if mod.get('enable', False) == True  %}
 freeradius-mod-{{ name }}-config-enable:
   file.symlink:
     - name: {{ freeradius.config_dir }}/mods-enabled/{{ name }}
@@ -95,7 +99,7 @@ freeradius-site-{{ name }}-config:
     - context:
         site: {{ site }}
 
-{% if site.get('enabled', False) == True  %}
+{% if site.get('enable', False) == True  %}
 freeradius-site-{{ name }}-config-enable:
   file.symlink:
     - name: {{ freeradius.config_dir }}/sites-enabled/{{ name }}
