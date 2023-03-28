@@ -14,7 +14,7 @@
         {{ key|indent(ind, True) }} {{ '{' }}
         {%- for k, v in value.items() %}
         {%- if v is mapping and k == 'data' and 'body' in value and value.body == 'json' %}
-        {{ key|indent(ind, True) }}{{ operator }}'{{ value | json }}'
+        {{ k|indent(ind, True) }}{{ operator }}'{{ v | json }}'
         {%- else %}
 {{ radius_block(v, k, operator, (ind + indent_increment)) }}
         {%- endif %}
