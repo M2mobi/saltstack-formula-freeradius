@@ -92,23 +92,23 @@ values:
         post-auth:
           'if (session-state:User-Name && reply:User-Name && request:User-Name && (reply:User-Name == request:User-Name))':
             update reply:
-              "&User-Name !* ANY"
+              - "&User-Name !* ANY":
           update:
-            "&reply: += &session-state:"
+            - "&reply: += &session-state:":
           exec:
           remove_reply_message_if_eap:
           Post-Auth-Type REJECT:
-            attr_filter.access_reject
-            eap
-            remove_reply_message_if_eap
+            attr_filter.access_reject:
+            eap:
+            remove_reply_message_if_eap:
           Post-Auth-Type Challenge: {}
           Post-Auth-Type Client-Lost: {}
           'if (EAP-Key-Name && &reply:EAP-Session-Id)':
             update reply:
-              "&EAP-Key-Name := &reply:EAP-Session-Id"
+              - "&EAP-Key-Name := &reply:EAP-Session-Id":
         pre-proxy: {}
         post-proxy:
-          eap
+          eap:
   # Just here for testing
   added_in_defaults: defaults_value
   winner: defaults

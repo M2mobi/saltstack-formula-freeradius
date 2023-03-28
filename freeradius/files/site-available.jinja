@@ -2,7 +2,7 @@
 
 {%- macro radius_block(value, key=None, operator=' = ', ind=0) -%}
     {%- if key not in ['enable'] -%}
-    {%- if value is none -%}
+    {%- if value is none or value == None or value == 'None' -%}
         {{ key|indent(ind, True) }}
     {%- elif value is boolean -%}
         {{ key|indent(ind, True) }}{{ operator }}{{ 'yes' if value else 'no' }}
@@ -24,8 +24,6 @@
         {%- for v in value %}
 {{ radius_block(v, key, operator, ind) }}
         {%- endfor -%}
-    {%- else -%}
-        {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- endif -%}
     {%- endif -%}
 {%- endmacro -%}
