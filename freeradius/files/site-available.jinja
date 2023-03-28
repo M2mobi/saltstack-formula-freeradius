@@ -4,10 +4,10 @@
     {%- if key not in ['enable'] -%}
     {%- if value is none -%}
         {{ key|indent(ind, True) }}
-    {%- elif value is number -%}
-        {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- elif value is boolean -%}
         {{ key|indent(ind, True) }}{{ operator }}{{ 'yes' if value else 'no' }}
+    {%- elif value is number -%}
+        {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- elif value is string -%}
         {{ key|indent(ind, True) }}{{ operator }}'{{ value }}'
     {%- elif value is mapping -%}
