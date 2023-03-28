@@ -73,10 +73,8 @@ freeradius-mod-{{ name }}-config-enable:
       - freeradius-mod-{{ name }}-config
 {% else %}
 freeradius-mod-{{ name }}-config-disable:
-  file.remove:
+  file.absent:
     - name: {{ freeradius.config_dir }}/mods-enabled/{{ name }}
-    - require:
-      - freeradius-mod-{{ name }}-config
 {% endif %}
 {% endfor %}
 {% endif %}
@@ -110,10 +108,8 @@ freeradius-site-{{ name }}-config-enable:
       - freeradius-site-{{ name }}-config
 {% else %}
 freeradius-site-{{ name }}-config-disable:
-  file.remove:
+  file.absent:
     - name: {{ freeradius.config_dir }}/sites-enabled/{{ name }}
-    - require:
-      - freeradius-site-{{ name }}-config
 {% endif %}
 {% endfor %}
 {% endif %}
