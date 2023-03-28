@@ -22,8 +22,8 @@ values:
       gtc:
         auth_type: PAP
       tls-config tls-common:
-        certificate_file: ${certdir}/letsencrypt/fullchain.pem
-        private_key_file: ${certdir}/letsencrypt/privkey.pem
+        certificate_file: ${certdir}/server.pem
+        private_key_file: ${certdir}/server.key
         ca_path: ${cadir}
         cipher_server_preference: no
         tls_min_version: "1.2"
@@ -33,7 +33,7 @@ values:
             enable: no
             lifetime: 24 # hours
             store:
-                - Tunnel-Private-Group-Id
+              Tunnel-Private-Group-Id
         verify: {}
         ocsp:
           enable: no
