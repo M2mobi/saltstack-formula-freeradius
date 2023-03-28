@@ -1,8 +1,10 @@
 {% set indent_increment = 4 %}
 
 {%- macro radius_block(value, key=None, operator=' = ', ind=0) -%}
-    {%- key not in ['enable'] -%}
-    {%- if value is number -%}
+    {%- if key not in ['enable'] -%}
+    {%- if value is None -%}
+        {{ key|indent(ind, True) }}
+    {%- elif value is number -%}
         {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- elif value is string -%}
         {{ key|indent(ind, True) }}{{ operator }}'{{ value }}'
@@ -23,8 +25,6 @@
     {%- else -%}
         {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- endif -%}
-    {%- else -%}
-        {{ key|indent(ind, True) }}
     {%- endif -%}
 {%- endmacro -%}
 
