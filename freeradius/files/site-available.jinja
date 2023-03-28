@@ -2,10 +2,14 @@
 
 {%- macro radius_block(value, key=None, operator=' = ', ind=0) -%}
     {%- if value != None -%}
-    {%- if value is number or value is string -%}
+    {%- if value is number -%}
         {{ key|indent(ind, True) }}{{ operator }}{{ value }}
+    {%- elif value is string -%}
+        {{ key|indent(ind, True) }}{{ operator }}'{{ value }}'
+    {%- elif value is mapping and key == 'body' -%}
+        {{ key|indent(ind, True) }}{{ operator }}'{{ value | json }}'
     {%- elif value is mapping -%}
-        {{ key|indent(ind, True) }}{{ operator }}{{ '{' }}
+        {{ key|indent(ind, True) }} {{ '{' }}
         {%- for k, v in value.items() %}
 {{ radius_block(v, k, operator, (ind + indent_increment)) }}
         {%- endfor %}
@@ -27,4 +31,4 @@
 #
 # This file is managed by Salt.
 
-{{ radius_block("server " + mod, name) }}
+{{ radius_block(site, "server " + name) }}
