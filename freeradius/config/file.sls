@@ -56,7 +56,7 @@ freeradius-letsencrypt-dir:
 freeradius-mod-{{ name }}-config:
   file.managed:
     - name: {{ freeradius.config_dir }}/mods-available/{{ name }}
-    - source: salt://freeradius/files/mods-available/{{ name }}
+    - source: salt://freeradius/files/mod-available.jinja
     - mode: '0644'
     - user: {{ freeradius.user }}
     - group: {{ freeradius.group }}
@@ -94,7 +94,7 @@ freeradius-mod-{{ name }}-config-disable:
 freeradius-site-{{ name }}-config:
   file.managed:
     - name: {{ freeradius.config_dir }}/sites-available/{{ name }}
-    - source: salt://freeradius/files/sites-available/{{ name }}
+    - source: salt://freeradius/files/site-available.jinja
     - mode: '0644'
     - user: {{ freeradius.user }}
     - group: {{ freeradius.group }}
