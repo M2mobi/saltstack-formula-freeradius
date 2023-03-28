@@ -7,4 +7,4 @@
 
 freeradius_install:
   pkg.installed:
-    - name: freeradius
+    - name: {{ freeradius.pkg.name }}

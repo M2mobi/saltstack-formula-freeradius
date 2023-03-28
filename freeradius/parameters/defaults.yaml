@@ -12,8 +12,6 @@ values:
   group: freeradius
   service:
     name: freeradius
-  subcomponent:
-    config: '/etc/freeradius-subcomponent-formula.conf'
   # Just here for testing
   added_in_defaults: defaults_value
   winner: defaults

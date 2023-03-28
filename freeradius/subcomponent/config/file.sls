@@ -18,7 +18,7 @@ freeradius-subcomponent-config-file-file-managed:
                               use_subpath=True
                  )
               }}
-    - mode: 644
+    - mode: '0644'
     - user: root
     - group: {{ freeradius.rootgroup }}
     - makedirs: True

@@ -13,6 +13,5 @@
 ---
 values:
   pkg:
-    name: freeradius-debian
-  config: /etc/freeradius.d/custom.conf
+    name: freeradius
 ...

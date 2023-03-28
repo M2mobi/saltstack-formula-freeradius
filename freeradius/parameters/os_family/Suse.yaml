@@ -13,5 +13,5 @@
 ---
 values:
   pkg:
-    name: freeradius-suse
+    name: freeradius
 ...
