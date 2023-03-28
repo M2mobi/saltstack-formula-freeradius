@@ -92,9 +92,9 @@ values:
         post-auth:
           'if (session-state:User-Name && reply:User-Name && request:User-Name && (reply:User-Name == request:User-Name))':
             update reply:
-              - "&User-Name !* ANY":
+              "&User-Name !* ANY":
           update:
-            - "&reply: += &session-state:":
+            "&reply: += &session-state:":
           exec:
           remove_reply_message_if_eap:
           Post-Auth-Type REJECT:
@@ -105,7 +105,7 @@ values:
           Post-Auth-Type Client-Lost: {}
           'if (EAP-Key-Name && &reply:EAP-Session-Id)':
             update reply:
-              - "&EAP-Key-Name := &reply:EAP-Session-Id":
+              "&EAP-Key-Name := &reply:EAP-Session-Id":
         pre-proxy: {}
         post-proxy:
           eap:
