@@ -4,55 +4,55 @@
 
 server default {
 listen {
-	type = auth
-	ipaddr = *
-	port = 0
-	limit {
-	      max_connections = 16
-	      lifetime = 0
-	      idle_timeout = 30
-	}
+    type = auth
+    ipaddr = *
+    port = 0
+    limit {
+          max_connections = 16
+          lifetime = 0
+          idle_timeout = 30
+    }
 }
 
 authorize {
-	eap {
-		ok = return
-	}
+    eap {
+        ok = return
+    }
 }
 
 authenticate {
-	eap
+    eap
 }
 
 post-auth {
-	if (session-state:User-Name && reply:User-Name && request:User-Name && (reply:User-Name == request:User-Name)) {
-		update reply {
-			&User-Name !* ANY
-		}
-	}
-	update {
-		&reply: += &session-state:
-	}
+    if (session-state:User-Name && reply:User-Name && request:User-Name && (reply:User-Name == request:User-Name)) {
+        update reply {
+            &User-Name !* ANY
+        }
+    }
+    update {
+        &reply: += &session-state:
+    }
 
-	exec
-	remove_reply_message_if_eap
-	Post-Auth-Type REJECT {
-		attr_filter.access_reject
-		eap
-		remove_reply_message_if_eap
-	}
-	Post-Auth-Type Challenge {}
-	Post-Auth-Type Client-Lost {}
-	if (EAP-Key-Name && &reply:EAP-Session-Id) {
-		update reply {
-			&EAP-Key-Name := &reply:EAP-Session-Id
-		}
-	}
+    exec
+    remove_reply_message_if_eap
+    Post-Auth-Type REJECT {
+        attr_filter.access_reject
+        eap
+        remove_reply_message_if_eap
+    }
+    Post-Auth-Type Challenge {}
+    Post-Auth-Type Client-Lost {}
+    if (EAP-Key-Name && &reply:EAP-Session-Id) {
+        update reply {
+            &EAP-Key-Name := &reply:EAP-Session-Id
+        }
+    }
 }
 
 pre-proxy {}
 
 post-proxy {
-	eap
+    eap
 }
 }

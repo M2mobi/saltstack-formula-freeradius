@@ -3,60 +3,60 @@
 # and all change will be overridden on next salt call
 
 server inner-tunnel {
-	listen {
-		ipaddr = {{ site.listen.ipaddr }}
-		port = {{ site.listen.port }}
-		type = auth
-		limit {
-		{%- for key,value in site.listen.limit.items() %}
-			{{ key }} = {{ value }}
-		{%- endfor %}
-		}
-	}
+    listen {
+        ipaddr = {{ site.listen.ipaddr }}
+        port = {{ site.listen.port }}
+        type = auth
+        limit {
+        {%- for key,value in site.listen.limit.items() %}
+            {{ key }} = {{ value }}
+        {%- endfor %}
+        }
+    }
 
-	authorize {
-		eap {
-			ok = return
-		}
-		files
-		expiration
-		logintime
-	}
+    authorize {
+        eap {
+            ok = return
+        }
+        files
+        expiration
+        logintime
+    }
 
-	authenticate {
-		Auth-Type rest {
-			update control {
-				{%- for header in site.authenticate.rest.headers %}
-					&REST-HTTP-Header += "{{ header }}"
-				{%- endfor %}
-			}
-			rest
-		}
-		Auth-Type PAP {
-			pap
-		}
-		Auth-Type CHAP {
-			chap
-		}
-		Auth-Type MS-CHAP {
-			mschap
-		}
-		mschap
-		eap
-	}
+    authenticate {
+        Auth-Type rest {
+            update control {
+                {%- for header in site.authenticate.rest.headers %}
+                    &REST-HTTP-Header += "{{ header }}"
+                {%- endfor %}
+            }
+            rest
+        }
+        Auth-Type PAP {
+            pap
+        }
+        Auth-Type CHAP {
+            chap
+        }
+        Auth-Type MS-CHAP {
+            mschap
+        }
+        mschap
+        eap
+    }
 
-	post-auth {
-		Post-Auth-Type REJECT {
-			attr_filter.access_reject
-			update outer.session-state {
-				&Module-Failure-Message := &request:Module-Failure-Message
-			}
-		}
-	}
+    post-auth {
+        Post-Auth-Type REJECT {
+            attr_filter.access_reject
+            update outer.session-state {
+                &Module-Failure-Message := &request:Module-Failure-Message
+            }
+        }
+    }
 
-	pre-proxy {}
+    pre-proxy {}
 
-	post-proxy {
-		eap
-	}
+    post-proxy {
+        eap
+    }
 }

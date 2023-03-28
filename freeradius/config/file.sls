@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-# vim: ft=sls
-
 {#- Get the `tplroot` from `tpldir` #}
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- set sls_pkg_install = tplroot ~ '.package.install' %}
@@ -10,6 +7,7 @@
 include:
   - {{ sls_pkg_install }}
 
+{#- Specific configuration for: group, clients, authorize #}
 groups:
   group.present:
     - name: {{ freeradius.group }}
@@ -27,6 +25,8 @@ freeradius-clients-config:
       - pkg: freeradius_install
     - context:
         clients: {{ freeradius.clients | json }}
+    - listen_in:
+      - service: {{ freeradius.service.name }}
 
 freeradius-auth-config:
   file.managed:
@@ -39,6 +39,8 @@ freeradius-auth-config:
       - pkg: freeradius_install
     - contents: |
         DEFAULT Auth-Type := rest
+    - listen_in:
+      - service: {{ freeradius.service.name }}
 
 freeradius-letsencrypt-dir:
   file.directory:
@@ -46,10 +48,11 @@ freeradius-letsencrypt-dir:
     - user: {{ freeradius.user }}
     - group: {{ freeradius.group }}
     - makedirs: True
+    - listen_in:
+      - service: {{ freeradius.service.name }}
 
-
-{% if 'mods' in freeradius %}
-{% for name,mod in freeradius.mods.items() %}
+{%- if 'mods' in freeradius %}
+{%- for name,mod in freeradius.mods.items() %}
 freeradius-mod-{{ name }}-config:
   file.managed:
     - name: {{ freeradius.config_dir }}/mods-available/{{ name }}
@@ -63,8 +66,10 @@ freeradius-mod-{{ name }}-config:
       - pkg: freeradius_install
     - context:
         mod: {{ mod }}
+    - listen_in:
+      - service: {{ freeradius.service.name }}
 
-{% if mod.get('enable', False) == True  %}
+{%- if mod.get('enable', False) == True  %}
 freeradius-mod-{{ name }}-config-enable:
   file.symlink:
     - name: {{ freeradius.config_dir }}/mods-enabled/{{ name }}
@@ -75,16 +80,16 @@ freeradius-mod-{{ name }}-config-enable:
     - makedirs: True
     - require:
       - freeradius-mod-{{ name }}-config
-{% else %}
+{%- else %}
 freeradius-mod-{{ name }}-config-disable:
   file.absent:
     - name: {{ freeradius.config_dir }}/mods-enabled/{{ name }}
-{% endif %}
-{% endfor %}
-{% endif %}
+{%- endif %}
+{%- endfor %}
+{%- endif %}
 
-{% if 'sites' in freeradius %}
-{% for name,site in freeradius.sites.items() %}
+{%- if 'sites' in freeradius %}
+{%- for name,site in freeradius.sites.items() %}
 freeradius-site-{{ name }}-config:
   file.managed:
     - name: {{ freeradius.config_dir }}/sites-available/{{ name }}
@@ -98,6 +103,8 @@ freeradius-site-{{ name }}-config:
       - pkg: freeradius_install
     - context:
         site: {{ site }}
+    - listen_in:
+      - service: {{ freeradius.service.name }}
 
 {% if site.get('enable', False) == True  %}
 freeradius-site-{{ name }}-config-enable:
@@ -110,10 +117,15 @@ freeradius-site-{{ name }}-config-enable:
     - makedirs: True
     - require:
       - freeradius-site-{{ name }}-config
-{% else %}
+{%- else %}
 freeradius-site-{{ name }}-config-disable:
   file.absent:
     - name: {{ freeradius.config_dir }}/sites-enabled/{{ name }}
-{% endif %}
-{% endfor %}
-{% endif %}
+{%- endif %}
+{%- endfor %}
+{%- endif %}
+
+restart-service:
+  service.running:
+    - name: {{ freeradius.service.name }}
+    - enable: True
