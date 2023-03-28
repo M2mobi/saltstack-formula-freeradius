@@ -66,6 +66,7 @@ freeradius-mod-{{ name }}-config:
       - pkg: freeradius_install
     - context:
         mod: {{ mod }}
+        name: {{ name }}
     - listen_in:
       - service: {{ freeradius.service.name }}
 
@@ -103,6 +104,7 @@ freeradius-site-{{ name }}-config:
       - pkg: freeradius_install
     - context:
         site: {{ site }}
+        name: {{ name }}
     - listen_in:
       - service: {{ freeradius.service.name }}
 
