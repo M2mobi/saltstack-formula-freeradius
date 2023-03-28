@@ -1,17 +1,19 @@
 {% set indent_increment = 4 %}
 
 {%- macro radius_block(value, key=None, operator=' = ', ind=0) -%}
-    {%- if value != None -%}
+    {%- key not in ['enable'] -%}
     {%- if value is number -%}
         {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- elif value is string -%}
         {{ key|indent(ind, True) }}{{ operator }}'{{ value }}'
-    {%- elif value is mapping and key == 'body' -%}
-        {{ key|indent(ind, True) }}{{ operator }}'{{ value | json }}'
     {%- elif value is mapping -%}
         {{ key|indent(ind, True) }} {{ '{' }}
         {%- for k, v in value.items() %}
+        {%- if v is mapping and k == 'data' and 'body' in value and value.body == 'json' -%}
+        {{ key|indent(ind, True) }}{{ operator }}'{{ value | json }}'
+        {%- else -%}
 {{ radius_block(v, k, operator, (ind + indent_increment)) }}
+        {%- endif -%}
         {%- endfor %}
 {{ '}'|indent(ind, True) }}
     {%- elif value is iterable -%}
@@ -22,6 +24,7 @@
         {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- endif -%}
     {%- else -%}
+        {{ key|indent(ind, True) }}
     {%- endif -%}
 {%- endmacro -%}
 

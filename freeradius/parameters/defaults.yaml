@@ -12,6 +12,103 @@ values:
   group: freeradius
   service:
     name: freeradius
+  mods:
+    eap:
+      default_eap_type: md5
+      timer_expire: 60
+      ignore_unknown_eap_types: no
+      cisco_accounting_username_bug: no
+      md5: {}
+      gtc:
+        auth_type: PAP
+      tls-config tls-common:
+        certificate_file: ${certdir}/letsencrypt/fullchain.pem
+        private_key_file: ${certdir}/letsencrypt/privkey.pem
+        ca_path: ${cadir}
+        cipher_server_preference: no
+        tls_min_version: "1.2"
+        tls_max_version: "1.2"
+        ecdh_curve: ""
+        cache:
+            enable: no
+            lifetime: 24 # hours
+            store:
+                - Tunnel-Private-Group-Id
+        verify: {}
+        ocsp:
+          enable: no
+          override_cert_url: yes
+          url: "http://127.0.0.1/ocsp/"
+      tls:
+        tls: tls-common
+      ttls:
+          tls: tls-common
+          default_eap_type: md5
+          copy_request_to_tunnel: no
+          use_tunneled_reply: no
+          virtual_server: inner_tunnel
+      peap:
+          tls: tls-common
+          default_eap_type: mschapv2
+          copy_request_to_tunnel: no
+          use_tunneled_reply: no
+          virtual_server: inner_tunnel
+      mschapv2: {}
+    rest:
+      tls:
+        check_cert: no
+        check_cert_cn: no
+      connect_uri: http://localhost
+      authenticate:
+        uri: "${..connect_uri}"
+        tls: ${..tls}
+        method: 'post'
+        body: 'json'
+        data: '{}'
+      pool:
+        start: ${thread[pool].start_servers}
+        min: ${thread[pool].min_spare_servers}
+        max: ${thread[pool].max_servers}
+        spare: ${thread[pool].max_spare_servers}
+        uses: 0
+        retry_delay: 30
+        lifetime: 0
+        idle_timeout: 60
+  sites:
+    default:
+      listen:
+        type: auth
+        ipaddr: '*'
+        port: 0
+        limit:
+          max_connections: 16
+          lifetime: 0
+          idle_timeout: 30
+        authorize:
+          eap:
+            ok: return
+        authenticate:
+          eap
+        post-auth:
+          'if (session-state:User-Name && reply:User-Name && request:User-Name && (reply:User-Name == request:User-Name))':
+            update reply:
+              "&User-Name !* ANY"
+          update:
+            "&reply: += &session-state:"
+          exec:
+          remove_reply_message_if_eap:
+          Post-Auth-Type REJECT:
+            attr_filter.access_reject
+            eap
+            remove_reply_message_if_eap
+          Post-Auth-Type Challenge: {}
+          Post-Auth-Type Client-Lost: {}
+          'if (EAP-Key-Name && &reply:EAP-Session-Id)':
+            update reply:
+              "&EAP-Key-Name := &reply:EAP-Session-Id"
+        pre-proxy: {}
+        post-proxy:
+          eap
   # Just here for testing
   added_in_defaults: defaults_value
   winner: defaults
