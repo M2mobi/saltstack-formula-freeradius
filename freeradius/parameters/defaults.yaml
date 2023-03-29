@@ -33,7 +33,7 @@ values:
             enable: no
             lifetime: 24 # hours
             store:
-              Tunnel-Private-Group-Id
+              Tunnel-Private-Group-Id:
         verify: {}
         ocsp:
           enable: no

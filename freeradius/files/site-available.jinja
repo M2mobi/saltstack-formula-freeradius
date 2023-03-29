@@ -1,7 +1,7 @@
-{% set indent_increment = 4 %}
+{%- set indent_increment = 4 %}
+{%- set _= site.pop('enable') %}
 
 {%- macro radius_block(value, key=None, operator=' = ', ind=0) -%}
-    {%- if key not in ['enable'] -%}
     {%- if value is none or value == None or value == 'None' -%}
         {{ key|indent(ind, True) }}
     {%- elif value is boolean -%}
@@ -24,7 +24,6 @@
         {%- for v in value %}
 {{ radius_block(v, key, operator, ind) }}
         {%- endfor -%}
-    {%- endif -%}
     {%- endif -%}
 {%- endmacro -%}
 
