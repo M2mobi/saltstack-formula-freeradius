@@ -1,6 +1,6 @@
 {#- Get the `tplroot` from `tpldir` #}
 {%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_pkg_install = tplroot ~ '.package.install' %}
+{%- set sls_pkg_install = tplroot ~ '.config.file' %}
 {%- from tplroot ~ "/map.jinja" import mapdata as freeradius with context %}
 {%- from tplroot ~ "/libtofs.jinja" import files_switch with context %}
 
@@ -39,15 +39,6 @@ freeradius-auth-config:
       - pkg: freeradius_install
     - contents: |
         DEFAULT Auth-Type := rest
-    - listen_in:
-      - service: {{ freeradius.service.name }}
-
-freeradius-letsencrypt-dir:
-  file.directory:
-    - name: {{ freeradius.config_dir }}/certs/letsencrypt
-    - user: {{ freeradius.user }}
-    - group: {{ freeradius.group }}
-    - makedirs: True
     - listen_in:
       - service: {{ freeradius.service.name }}
 

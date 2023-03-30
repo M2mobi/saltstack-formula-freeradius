@@ -4,4 +4,5 @@
 include:
   - .package
   - .service
+  - .certificates
   - .config

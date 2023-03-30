@@ -3,7 +3,7 @@
 
 {#- Get the `tplroot` from `tpldir` #}
 {%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_service_clean = tplroot ~ '.service.clean' %}
+{%- set sls_service_clean = tplroot ~ '.config.clean' %}
 {%- from tplroot ~ "/map.jinja" import mapdata as freeradius with context %}
 
 include:
