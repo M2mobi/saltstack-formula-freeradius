@@ -9,7 +9,7 @@
     {%- elif value is number -%}
         {{ key|indent(ind, True) }}{{ operator }}{{ value }}
     {%- elif value is string -%}
-        {{ key|indent(ind, True) }}{{ operator }}'{{ value }}'
+        {{ key|indent(ind, True) }}{{ operator }}"{{ value }}"
     {%- elif value is mapping -%}
         {{ key|indent(ind, True) }} {{ '{' }}
         {%- for k, v in value.items() %}
